@@ -9,7 +9,7 @@
                 <div class="actions">
                     <button class="icon-button" @click="toggleLike(message.id)">
                         <img src="/images/heart.png" alt="like" class="heart" :class="{ liked: message.liked }" />
-                        <span v-if="message.likes > 0" class="like-count">{{ message.likes }}</span>
+                        <span v-if="message.likes >= 0" class="like-count">{{ message.likes }}</span>
                     </button>
 
                     <button v-if="isMyPost" type="button" class="icon-button" @click="deletePost">
