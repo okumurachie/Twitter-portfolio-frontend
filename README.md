@@ -3,7 +3,7 @@
 ## 概要
 
 Twitter風の簡易SNSアプリのフロントエンドです。
-Nuxt3を使用してUIを構築し、LaravelのBackend APIと連携しています。
+Nuxt 4 を使用してUIを構築し、LaravelのBackend APIと連携しています。
 
 ## トップ画面
 
@@ -53,15 +53,20 @@ cp .env.example .env
 
 - 以下の値は Firebaseコンソール → プロジェクト設定 → 全般 → マイアプリ から取得してください。
 
-    NUXT_PUBLIC_FIREBASE_API_KEY=xxxxxxxxxxxxxxxxxxxxx
-    NUXT_PUBLIC_FIREBASE_AUTH_DOMAIN=xxxxxxxxxxxxxxxxxxxxx
-    NUXT_PUBLIC_FIREBASE_PROJECT_ID=xxxxxxxxxxxxxxxxxxxxx
-    NUXT_PUBLIC_FIREBASE_STORAGE_BUCKET=xxxxxxxxxxxxxxxxxxxxx
-    NUXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=xxxxxxxxxxxxxxxxxxxxx
-    NUXT_PUBLIC_FIREBASE_APP_ID=xxxxxxxxxxxxxxxxxxxxx
+```env
+NUXT_PUBLIC_FIREBASE_API_KEY=xxxxxxxxxxxxxxxxxxxxx
+NUXT_PUBLIC_FIREBASE_AUTH_DOMAIN=xxxxxxxxxxxxxxxxxxxxx
+NUXT_PUBLIC_FIREBASE_PROJECT_ID=xxxxxxxxxxxxxxxxxxxxx
+NUXT_PUBLIC_FIREBASE_STORAGE_BUCKET=xxxxxxxxxxxxxxxxxxxxx
+NUXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=xxxxxxxxxxxxxxxxxxxxx
+NUXT_PUBLIC_FIREBASE_APP_ID=xxxxxxxxxxxxxxxxxxxxx
+```
 
-    Backend API のURL：
-    NUXT_PUBLIC_API_BASE=http://127.0.0.1:8000
+Backend API のURL：
+
+```env
+NUXT_PUBLIC_API_BASE=http://127.0.0.1:8000
+```
 
 ## 4.依存パッケージインストール
 
@@ -77,47 +82,62 @@ npm run dev
 
 ## 6.アクセス
 
-- http://localhost:3000
+```
+http://localhost:3000
+```
 
 ## 使用技術
 
-- Nuxt.js
-- Firebase Authentication（IDトークン認証）
+- Nuxt 4.3(Vue 3ベース)
+- Pinia(状態管理)
+- Firebase 12系(認証)
+- vee-validate + yup(フォームバリデーション)
+- REST API（Laravel連携）
 
 ## 主な機能
 
 - Firebase Authentication（フロント側ログイン管理）
 - 投稿の一覧表示
-- 投稿作成・削除
+- 投稿作成・削除(認証ユーザーのみ)
 - いいね機能(重複防止)
 - コメント機能
-- 投稿追加・削除・コメント追加・いいね機能は認証ユーザーのみ操作可能。投稿削除は自身の投稿のみ可能。
+- 投稿追加・削除・コメント追加・いいね機能は認証ユーザーのみ操作可能
 - 非同期通信(API連携)
 - 状態管理(ログイン状態保持)
+- 自身の投稿のみ削除可能
 
 ## UI設計
 
-- Twitter/X ライクな SNS UI を Nuxt3 で実装
+- Twitter/X ライクな SNS UI を Nuxt 4 で実装
 - PC / スマートフォン両対応（レスポンシブ）
 - スマートフォン表示では、ナビゲーション簡略化
 - コンポーネント設計を意識し、責務分離を実施
 
 ## 使い方（ローカル確認）
 
-- 1.バックエンドを起動
-- 2.Firebaseでユーザー登録（Test User3など）
-- 3.登録したユーザーで操作確認（Seederユーザーは表示用で操作不可）
+1. バックエンドを起動
+2. Firebaseでユーザー登録（例：Test User）
+3. 登録したユーザーでログイン
+4. 投稿・削除・いいね・コメントの動作確認
+
+※ Seederユーザー（Test User1 / Test User2）は表示専用です。
 
 ## 注意事項
 
-- Seederユーザー（Test User1 / Test User2）は表示専用です。
-- 操作確認は「新規登録」したユーザーで行ってください。
 - Backendが起動していない場合、投稿や認証は動作しません。
+- Firebase設定が正しくない場合、ログインできません。
 
 ## 開発環境
 
-- 商品一覧画面（トップ画面）：http://localhost:3000/
-- 会員登録：http://localhost:3000/register
-- ログイン:http://localhost:3000/login
+- Node.js 18.x 以上
+- npm (Node付属)
+
+#### ローカルURL:
+
+```
+トップ画面：http://localhost:3000/
+会員登録：http://localhost:3000/register
+ログイン:http://localhost:3000/login
+```
 
 # Twitter-frontend
