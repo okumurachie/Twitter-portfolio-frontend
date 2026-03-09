@@ -1,13 +1,11 @@
 <template>
     <header class="header">
-        <!-- ロゴ -->
         <div class="logo">
             <NuxtLink to="/">
                 <img src="/images/logo.png" alt="ヘッダーロゴ" />
             </NuxtLink>
         </div>
 
-        <!-- ナビ -->
         <nav class="nav">
             <NuxtLink to="/register">新規登録</NuxtLink>
             <NuxtLink to="/login">ログイン</NuxtLink>
