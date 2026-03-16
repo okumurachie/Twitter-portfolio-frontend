@@ -1,11 +1,21 @@
 import { defineStore } from 'pinia';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import {
+    getAuth,
+    onAuthStateChanged,
+    type User as FirebaseUser,
+} from 'firebase/auth';
+
+type LaravelUser = {
+    id: number;
+    name: string;
+    email: string;
+};
 
 export const useAuthStore = defineStore('auth', {
     state: () => ({
-        user: null as any,
+        user: null as FirebaseUser | null,
         token: null as string | null,
-        laravelUser: null as any,
+        laravelUser: null as LaravelUser | null,
         loading: true,
     }),
 
@@ -38,12 +48,17 @@ export const useAuthStore = defineStore('auth', {
             }
 
             try {
-                const res = await $fetch('http://127.0.0.1:8000/api/user', {
-                    headers: {
-                        Authorization: `Bearer ${this.token}`,
+                const res = await $fetch<LaravelUser>(
+                    'http://127.0.0.1:8000/api/user',
+                    {
+                        headers: {
+                            Authorization: `Bearer ${this.token}`,
+                        },
                     },
-                });
-                this.user = res;
+                );
+                console.log('Laravel user:', res);
+
+                this.laravelUser = res;
                 return res;
             } catch (error) {
                 console.error('fetchMe error:', error);

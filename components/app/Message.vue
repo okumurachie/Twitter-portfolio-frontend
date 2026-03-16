@@ -37,7 +37,7 @@ const props = defineProps({
     },
     currentUserId: {
         type: Number,
-        required: true
+        default: null
     },
     showDetailButton: {
         type: Boolean,
@@ -46,11 +46,16 @@ const props = defineProps({
 })
 
 const isMyPost = computed(() => {
-    console.log("post.user_id:", props.message.user_id, "currentUserId:", props.currentUserId)
-    return Number(props.message.user_id) === Number(props.currentUserId)
+    console.log({
+        postUserId: props.message.user_id,
+        currentUserId: props.currentUserId,
+        result: props.message.user_id == props.currentUserId
+    })
+
+    return props.message.user_id == props.currentUserId
 })
 
-const emit = defineEmits(['like'])
+const emit = defineEmits(['like', 'deleted'])
 
 const toggleLike = () => {
     emit('like', props.message.id)

@@ -14,7 +14,7 @@ const route = useRoute()
 const postId = computed(() => Number(route.params.id))
 
 const auth = useAuthStore()
-const currentUserId = computed(() => auth.user?.id ?? null)
+const currentUserId = computed(() => auth.userId)
 
 const { toggleLike } = useMessages()
 

@@ -1,13 +1,28 @@
 import { useAuthStore } from '@/stores/auth';
 import { getAuth } from 'firebase/auth';
 
+interface User {
+    id: number;
+    name: string;
+}
+
+interface Message {
+    id: number;
+    content: string;
+    user: User;
+    user_id: number;
+    likes: number;
+    liked: boolean;
+    loading?: boolean;
+}
+
 export const useMessages = () => {
     const auth = useAuthStore();
-    const messages = useState('messages', () => []);
+    const messages = useState<Message[]>('messages', () => []);
 
     const fetchMessages = async () => {
         try {
-            const res = await $fetch('http://localhost:8000/api/posts');
+            const res = await $fetch<any[]>('http://localhost:8000/api/posts');
             messages.value = res.map((post) => ({
                 id: post.id,
                 content: post.content,
@@ -21,12 +36,12 @@ export const useMessages = () => {
         }
     };
 
-    const createMessage = async (content) => {
+    const createMessage = async (content: string) => {
         if (!auth.token) {
             return navigateTo('/login');
         }
 
-        const res = await $fetch('http://localhost:8000/api/posts', {
+        const res = await $fetch<any>('http://localhost:8000/api/posts', {
             method: 'POST',
             headers: {
                 Authorization: `Bearer ${auth.token}`,
@@ -45,14 +60,14 @@ export const useMessages = () => {
 
         return res;
     };
-    const findMessage = (id) => {
+    const findMessage = (id: number): Message | undefined => {
         return messages.value.find((messages) => messages.id === Number(id));
     };
 
-    const toggleLike = async (id) => {
-        const auth = getAuth();
+    const toggleLike = async (id: number) => {
+        const authFirebase = getAuth();
 
-        if (!auth.currentUser) {
+        if (!authFirebase.currentUser) {
             return navigateTo('/login');
         }
 
@@ -63,8 +78,8 @@ export const useMessages = () => {
         target.loading = true;
 
         try {
-            const token = await auth.currentUser.getIdToken();
-            const res = await $fetch(
+            const token = await authFirebase.currentUser.getIdToken();
+            const res = await $fetch<any>(
                 `http://localhost:8000/api/posts/${id}/like`,
                 {
                     method: 'POST',
@@ -76,7 +91,7 @@ export const useMessages = () => {
 
             target.liked = res.liked;
             target.likes = res.likes;
-        } catch (error) {
+        } catch (error: any) {
             if (error.response?.status === 401) {
                 return navigateTo('/login');
             }
@@ -86,7 +101,7 @@ export const useMessages = () => {
         }
     };
 
-    const deleteMessage = async (id) => {
+    const deleteMessage = async (id: number) => {
         await $fetch(`http://127.0.0.1:8000/api/posts/${id}`, {
             method: 'DELETE',
             headers: {

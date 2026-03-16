@@ -19,7 +19,7 @@ import { watch } from 'vue'
 
 const auth = useAuthStore()
 
-const currentUserId = computed(() => auth.user?.id ?? null)
+const currentUserId = computed(() => auth.userId)
 
 watch(
     () => auth.token,
@@ -29,7 +29,6 @@ watch(
         if (token) {
             const me = await auth.fetchMe()
             console.log('Laravel response:', me)
-            currentUserId.value = me?.id ?? null
         }
     },
     { immediate: true }
