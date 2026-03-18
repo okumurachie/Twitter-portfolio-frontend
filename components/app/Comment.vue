@@ -23,7 +23,7 @@
                 <div class="form-button">
                     <button class="comment-button" type="submit" :disabled="!auth.isLoggedIn || isLoading">{{ isLoading
                         ? '送信中...' : 'コメント'
-                    }}</button>
+                        }}</button>
                 </div>
             </form>
         </div>
@@ -31,20 +31,28 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useForm, useField } from 'vee-validate'
+import { useCommentStore } from '@/stores/comments'
 import * as yup from 'yup'
 
 const auth = useAuthStore()
+const commentStore = useCommentStore()
+
+const comments = computed(() => commentStore.comments)
 
 const props = defineProps({
     postId: Number,
-    comments: Array
 })
 
-const emit = defineEmits(['submit'])
-
+watch(
+    () => commentStore.comments,
+    (newComments) => {
+        console.log('comments:', newComments)
+    },
+    { immediate: true }
+)
 const schema = yup.object({
     comment: yup
         .string()
@@ -64,7 +72,11 @@ const submitHandler = handleSubmit(async (values) => {
     isLoading.value = true
 
     try {
-        emit('submit', values.comment)
+        await commentStore.createComment(
+            props.postId,
+            values.comment,
+            auth.token
+        )
         resetForm()
     } catch (error) {
         console.error('コメント送信エラー:', error)

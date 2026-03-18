@@ -1,6 +1,6 @@
 <template>
     <Message v-if="message" :message="message" :current-user-id="currentUserId" :show-detail-button="false" />
-    <Comment :post-id="postId" :comments="comments" @submit="onSubmitComment" />
+    <Comment :post-id="postId" />
 </template>
 
 <script setup>
@@ -8,22 +8,23 @@ import Message from '@/components/app/Message.vue'
 import Comment from '@/components/app/Comment.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useMessageStore } from '@/stores/messages'
-import { computed, ref, watch } from 'vue'
+import { useCommentStore } from '@/stores/comments'
+import { computed, ref, watch, onMounted } from 'vue'
 
 const route = useRoute()
 const postId = computed(() => Number(route.params.id))
 
 const auth = useAuthStore()
 const messageStore = useMessageStore()
+const commentStore = useCommentStore()
 
 const currentUserId = computed(() => auth.userId)
 
 const message = ref(null)
-const comments = ref([])
 
 const config = useRuntimeConfig();
 
-const fetchData = async () => {
+const fetchPost = async () => {
     try {
         console.log('postId:', postId.value)
         if (!postId.value) return
@@ -36,29 +37,26 @@ const fetchData = async () => {
             liked: post.liked ?? false,
         }
 
-        const commentData = await $fetch(`${config.public.apiBase}/posts/${postId.value}/comments`)
-        comments.value = commentData
     } catch (error) {
         console.error('エラー発生:', error)
     }
 }
 
-watch(postId, fetchData, { immediate: true })
+onMounted(() => {
+    if (postId.value) {
+        fetchPost()
+        commentStore.fetchComments(postId.value)
+    }
+})
+
+watch(postId, (newId) => {
+    if (!newId) return
+    fetchPost()
+    commentStore.fetchComments(newId)
+})
 
 const onLike = () => {
     messageStore.toggleLike(postId.value)
-}
-
-const onSubmitComment = async (content) => {
-    const newComment = await $fetch(`${config.public.apiBase}/posts/${postId.value}/comments`, {
-        method: 'POST',
-        headers: {
-            Authorization: `Bearer ${auth.token}`
-        },
-        body: { content }
-    })
-
-    comments.value.unshift(newComment)
 }
 
 definePageMeta({
