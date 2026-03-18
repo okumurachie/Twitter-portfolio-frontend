@@ -24,7 +24,7 @@
                 <img src="/images/logout.png" alt="ログインアイコン" class="menu-icon" />
                 <span>ログイン</span>
             </button>
-            <PostForm :isLoading="isLoading" @submit="handlePostSubmit" />
+            <PostForm />
         </div>
     </aside>
 </template>
@@ -32,7 +32,6 @@
 <script setup lang="ts">
 import { signOut } from 'firebase/auth'
 import { computed } from 'vue'
-import { ref } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import PostForm from '@/components/app/PostForm.vue'
 
@@ -42,7 +41,7 @@ defineProps({
 
 const auth = useAuthStore()
 
-const emit = defineEmits(['close', 'submit'])
+const emit = defineEmits(['close'])
 
 
 const isLoggedIn = computed(() => auth.isLoggedIn)
@@ -66,22 +65,6 @@ const handleLogout = async () => {
 const handleLogin = () => {
     emit('close')
     navigateTo('/login')
-}
-const isLoading = ref(false)
-
-const { createMessage } = useMessages()
-
-const handlePostSubmit = async (message: string) => {
-    isLoading.value = true
-    try {
-        await createMessage(message)
-        emit('close')
-    } catch (error: any) {
-        console.error('投稿エラー:', error)
-        alert('投稿送信に失敗しました')
-    } finally {
-        isLoading.value = false
-    }
 }
 </script>
 

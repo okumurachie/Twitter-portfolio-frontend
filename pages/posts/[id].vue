@@ -1,6 +1,5 @@
 <template>
-    <Message v-if="message" :message="message" :current-user-id="currentUserId" :show-detail-button="false"
-        @like="onLike" />
+    <Message v-if="message" :message="message" :current-user-id="currentUserId" :show-detail-button="false" />
     <Comment :post-id="postId" :comments="comments" @submit="onSubmitComment" />
 </template>
 
@@ -8,25 +7,28 @@
 import Message from '@/components/app/Message.vue'
 import Comment from '@/components/app/Comment.vue'
 import { useAuthStore } from '@/stores/auth'
+import { useMessageStore } from '@/stores/messages'
 import { computed, ref, watch } from 'vue'
 
 const route = useRoute()
 const postId = computed(() => Number(route.params.id))
 
 const auth = useAuthStore()
-const currentUserId = computed(() => auth.userId)
+const messageStore = useMessageStore()
 
-const { toggleLike } = useMessages()
+const currentUserId = computed(() => auth.userId)
 
 const message = ref(null)
 const comments = ref([])
+
+const config = useRuntimeConfig();
 
 const fetchData = async () => {
     try {
         console.log('postId:', postId.value)
         if (!postId.value) return
 
-        const post = await $fetch(`http://localhost:8000/api/posts/${postId.value}`)
+        const post = await $fetch(`${config.public.apiBase}/posts/${postId.value}`)
         console.log('取得成功:', post)
         message.value = {
             ...post,
@@ -34,7 +36,7 @@ const fetchData = async () => {
             liked: post.liked ?? false,
         }
 
-        const commentData = await $fetch(`http://localhost:8000/api/posts/${postId.value}/comments`)
+        const commentData = await $fetch(`${config.public.apiBase}/posts/${postId.value}/comments`)
         comments.value = commentData
     } catch (error) {
         console.error('エラー発生:', error)
@@ -44,11 +46,11 @@ const fetchData = async () => {
 watch(postId, fetchData, { immediate: true })
 
 const onLike = () => {
-    toggleLike(postId.value)
+    messageStore.toggleLike(postId.value)
 }
 
 const onSubmitComment = async (content) => {
-    const newComment = await $fetch(`http://localhost:8000/api/posts/${postId.value}/comments`, {
+    const newComment = await $fetch(`${config.public.apiBase}/posts/${postId.value}/comments`, {
         method: 'POST',
         headers: {
             Authorization: `Bearer ${auth.token}`

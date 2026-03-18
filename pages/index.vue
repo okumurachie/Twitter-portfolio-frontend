@@ -1,7 +1,6 @@
 <template>
     <div class="message-content">
-        <Message v-for="message in messages" :key="message.id" :message="message" :current-user-id="currentUserId"
-            @like="onLike" @deleted="removeMessage" />
+        <Message v-for="message in messages" :key="message.id" :message="message" :current-user-id="currentUserId" />
     </div>
 </template>
 
@@ -13,9 +12,9 @@ definePageMeta({
 
 import Message from '@/components/app/Message.vue'
 import { useAuthStore } from '@/stores/auth'
+import { useMessageStore } from '@/stores/messages'
 import { computed } from 'vue'
 import { watch } from 'vue'
-
 
 const auth = useAuthStore()
 
@@ -34,19 +33,16 @@ watch(
     { immediate: true }
 )
 
-const { messages, toggleLike, fetchMessages } = useMessages()
+const messageStore = useMessageStore()
 
-onMounted(() => {
-    fetchMessages()
+const messages = computed(() => messageStore.messages)
+
+onMounted(async () => {
+    await messageStore.fetchMessages()
+    console.log('messages:', messageStore.messages)
+
 })
 
-const onLike = (id) => {
-    toggleLike(id)
-}
-
-const removeMessage = (id) => {
-    messages.value = messages.value.filter(m => m.id !== id)
-}
 </script>
 
 <style scoped>

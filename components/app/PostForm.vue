@@ -16,6 +16,7 @@
 
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth'
+import { useMessageStore } from '@/stores/messages'
 import { useForm, useField } from 'vee-validate'
 import * as yup from 'yup'
 
@@ -23,11 +24,8 @@ const props = defineProps<{
     isLoading?: boolean
 }>()
 
-const emit = defineEmits<{
-    (e: 'submit', message: string): void
-}>()
-
 const auth = useAuthStore()
+const messageStore = useMessageStore()
 
 const schema = yup.object({
     message: yup
@@ -42,8 +40,9 @@ const { handleSubmit, errors, resetForm } = useForm({
 
 const { value: message } = useField('message')
 
-const submitHandler = handleSubmit((values) => {
-    emit('submit', values.message)
+const submitHandler = handleSubmit(async (values) => {
+    if (!auth.token) return
+    await messageStore.createMessage(values.message, auth.token)
     resetForm()
 })
 

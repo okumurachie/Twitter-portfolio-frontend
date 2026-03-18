@@ -36,6 +36,7 @@ const isLoading = ref(false)
 
 const onSubmit = handleSubmit(async (values) => {
     isLoading.value = true
+    const config = useRuntimeConfig();
 
     try {
         const userCredential = await createUserWithEmailAndPassword(
@@ -48,7 +49,7 @@ const onSubmit = handleSubmit(async (values) => {
         })
         const idToken = await userCredential.user.getIdToken(true)
 
-        await $fetch('http://localhost:8000/api/user/update-name', {
+        await $fetch(`${config.public.apiBase}/user/update-name`, {
             method: 'POST',
             headers: { Authorization: `Bearer ${idToken}` },
             body: { name: values.username }

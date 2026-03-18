@@ -65,7 +65,7 @@ NUXT_PUBLIC_FIREBASE_APP_ID=xxxxxxxxxxxxxxxxxxxxx
 Backend API のURL：
 
 ```env
-NUXT_PUBLIC_API_BASE=http://127.0.0.1:8000
+NUXT_PUBLIC_API_BASE=http:////localhost:8000/api
 ```
 
 ## 4.依存パッケージインストール

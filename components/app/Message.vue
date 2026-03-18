@@ -30,6 +30,12 @@
 </template>
 
 <script setup>
+import { useAuthStore } from '@/stores/auth'
+import { useMessageStore } from '@/stores/messages'
+
+const messageStore = useMessageStore()
+const auth = useAuthStore()
+
 const props = defineProps({
     message: {
         type: Object,
@@ -49,22 +55,20 @@ const isMyPost = computed(() => {
     console.log({
         postUserId: props.message.user_id,
         currentUserId: props.currentUserId,
-        result: props.message.user_id == props.currentUserId
+        result: Number(props.message.user_id) === Number(props.currentUserId)
     })
 
     return props.message.user_id == props.currentUserId
 })
 
-const emit = defineEmits(['like', 'deleted'])
+const emit = defineEmits(['deleted'])
 
 const toggleLike = () => {
-    emit('like', props.message.id)
+    messageStore.toggleLike(props.message.id)
 }
 
-const { deleteMessage } = useMessages()
-
 const deletePost = async () => {
-    await deleteMessage(props.message.id)
+    await messageStore.deleteMessage(props.message.id, auth.token)
     emit('deleted', props.message.id)
 }
 </script>
