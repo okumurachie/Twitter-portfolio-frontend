@@ -85,9 +85,9 @@ flowchart TD
     B -->|API通信| D[Laravel API]
     D -->|DB操作| E[MySQL]
 
-    style B fill:#d0ebff
-    style C fill:#ffe066
-    style D fill:#d3f9d8
+    style B fill:#d0ebff, color:#000
+    style C fill:#ffe066, color:#000
+    style D fill:#d3f9d8, color:#000
 ```
 
 ### 処理の流れ
